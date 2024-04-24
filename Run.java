@@ -12,6 +12,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import git.tools.client.GitSubprocessClient;
+import github.tools.client.GitHubApiClient;
+import github.tools.responseObjects.*;
+
 
 public class Run
 {
@@ -20,12 +24,13 @@ public class Run
     private static String repoDescription; // Variable to store the GitHub repository description
     private static String repoVisibility; // Variable to store the repository visibility ("public" or "private")
     private static String accessKey; // Variable to store the access key
+    private static String githubUsername; // Variable to store the GitHub username
     public static void main(String[] args)
     {
             // Create the JFrame
             JFrame frame = new JFrame("GitHub Desktop V2");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 500);
+            frame.setSize(800, 550);
             frame.setLocationRelativeTo(null); // Center the frame on the screen
 
             // Main panel with BoxLayout
@@ -78,6 +83,15 @@ public class Run
             visibilityPanel.add(privateButton);
             panel.add(visibilityPanel);
 
+            // GitHub username entry panel
+            JPanel usernamePanel = new JPanel();
+            usernamePanel.setBackground(new Color(210, 225, 245));
+            JLabel usernameLabel = new JLabel("Enter GitHub Username:");
+            JTextField usernameField = new JTextField(20); // 20 columns wide
+            usernamePanel.add(usernameLabel);
+            usernamePanel.add(usernameField);
+            panel.add(usernamePanel);
+
             // Access key entry panel
             JPanel keyPanel = new JPanel();
             keyPanel.setBackground(new Color(210, 225, 245));
@@ -113,7 +127,8 @@ public class Run
                 repoDescription = descField.getText();
                 repoVisibility = publicButton.isSelected() ? "Public" : "Private";
                 accessKey = keyField.getText();
-                displayRepoInfoLabel.setText("<html>Repository: " + repoName + "<br/>Description: " + repoDescription + "<br/>Visibility: " + repoVisibility + "<br/>Access Key: " + accessKey + "</html>");
+                githubUsername = usernameField.getText();
+                displayRepoInfoLabel.setText("<html>Repository: " + repoName + "<br/>Description: " + repoDescription + "<br/>Visibility: " + repoVisibility + "<br/>GitHub Username: " + githubUsername + "<br/>Access Key: " + accessKey + "</html>");
             });
 
             // Make the frame visible
