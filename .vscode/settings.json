@@ -1,7 +1,0 @@
-{
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "/Users/trippmenhall/Downloads/GitHubApiClient-v0.0.7.jar",
-        "/Users/trippmenhall/Downloads/GitSubprocessClient-v0.0.12.jar"
-    ]
-}
