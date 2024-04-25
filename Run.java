@@ -7,12 +7,18 @@ import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -33,9 +39,9 @@ public class Run
     public static void main(String[] args)
     {
             // Create the JFrame
-            JFrame frame = new JFrame("GitHub Desktop V2");
+            JFrame frame = new JFrame("Microsoft GitHub Repo Maker");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 550);
+            frame.setSize(700, 600);
             frame.setLocationRelativeTo(null); // Center the frame on the screen
 
             // Main panel with BoxLayout
@@ -43,6 +49,28 @@ public class Run
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
             panel.setBackground(new Color(230, 240, 255)); // Light blue background
             frame.getContentPane().add(panel);
+
+            // Logo
+            JPanel logo = new JPanel();
+            logo.setBackground(new Color(230, 240, 255));
+            BufferedImage myPicture = null;
+            try {
+                myPicture = ImageIO.read(new File("QuinnipiacMicrosoftLogo.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Image scaledImage = myPicture.getScaledInstance(100,100,Image.SCALE_SMOOTH);
+            JLabel logoImage = new JLabel(new ImageIcon(scaledImage));
+            logo.add(logoImage);
+            panel.add(logo);
+
+            // Disclaimer
+            JPanel disclaimer = new JPanel();
+            disclaimer.setBackground(new Color(230, 240, 255));
+            JLabel disclaimerText = new JLabel("This application is a prototype and not yet meant for commercial use.");
+            disclaimerText.setFont(new Font("Arial", Font.PLAIN, 9));
+            disclaimer.add(disclaimerText);
+            panel.add(disclaimer);
 
             // Directory chooser panel
             JPanel dirPanel = new JPanel();
@@ -74,7 +102,7 @@ public class Run
 
             // Visibility selection panel
             JPanel visibilityPanel = new JPanel();
-            visibilityPanel.setBackground(new Color(230, 240, 255)); // Main background color
+            visibilityPanel.setBackground(new Color(210, 225, 245)); // Main background color
             JLabel visibilityLabel = new JLabel("Set Repository Visibility:");
             JRadioButton publicButton = new JRadioButton("Public", true);
             JRadioButton privateButton = new JRadioButton("Private");
