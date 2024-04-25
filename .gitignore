@@ -63,5 +63,6 @@ out/
 
 .vscode-test
 .vscode
+settings.json
 
 *.vsix
