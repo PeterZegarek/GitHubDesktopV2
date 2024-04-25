@@ -155,7 +155,7 @@ public class Run
 
                 // link to the repo
                 String link = "https://github.com/" + githubUsername + "/" + repoName;
-                System.out.println("Link: " + link );
+                System.out.println("Link to your repo: " + link );
 
                 // add remote origin
                 String gitRemoteAdd = gitSubprocessClient.gitRemoteAdd("origin", link);
@@ -177,7 +177,8 @@ public class Run
 
                 // add a gitignore and a readme
                 CreateFileResponse createFile = gitHubApiClient.createFile(githubUsername, repoName, ".gitignore", "master", "*.class\nbin/\nout/\n.classpath\n.vscode", "created a gitignore");
-                CreateFileResponse createFile2 = gitHubApiClient.createFile(githubUsername, repoName, "README.md", "master", repoName, "created a README");
+                String readMeHeader = "<h1>" + repoName + "</h1>";
+                CreateFileResponse createFile2 = gitHubApiClient.createFile(githubUsername, repoName, "README.md", "master", readMeHeader, "created a README");
 
 
 
