@@ -8,6 +8,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.border.EmptyBorder;
@@ -156,61 +157,70 @@ public class Run
             });
 
             submitButton.addActionListener(e -> {
-                repoName = nameField.getText();
-                repoDescription = descField.getText();
-                repoVisibility = publicButton.isSelected() ? "Public" : "Private";
-                boolean privateRepo = false;
-                if (repoVisibility.equals("Private")){
-                    privateRepo = true;
-                }
-                accessKey = keyField.getText();
-                githubUsername = usernameField.getText();
-                displayRepoInfoLabel.setText("<html>Repository: " + repoName + "<br/>Description: " + repoDescription + "<br/>Visibility: " + repoVisibility + "<br/>GitHub Username: " + githubUsername + "<br/>Access Key: " + accessKey + "</html>");
+                // Validation to check if all fields are filled
+                if (nameField.getText().isEmpty() || descField.getText().isEmpty() || usernameField.getText().isEmpty() || keyField.getText().isEmpty() || selectedDirectoryPath == null) 
+                {
+                    JOptionPane.showMessageDialog(frame, "All fields must be filled out.", "Error", JOptionPane.ERROR_MESSAGE);
+                } 
+                else 
+                {
+                    repoName = nameField.getText();
+                    repoDescription = descField.getText();
+                    repoVisibility = publicButton.isSelected() ? "Public" : "Private";
+                    accessKey = keyField.getText();
+                    githubUsername = usernameField.getText();
+                    displayRepoInfoLabel.setText("<html>Repository: " + repoName + "<br/>Description: " + repoDescription + "<br/>Visibility: " + repoVisibility + "<br/>GitHub Username: " + githubUsername + "<br/>Access Key: " + accessKey + "</html>");
+                    boolean privateRepo = false;
+                    if (repoVisibility.equals("Private"))
+                    {
+                        privateRepo = true;
+                    }
 
-                // actual repo setup
-                GitHubApiClient gitHubApiClient = new GitHubApiClient(githubUsername, accessKey);
-                GitSubprocessClient gitSubprocessClient = new GitSubprocessClient(selectedDirectoryPath);
+                    // actual repo setup
+                    GitHubApiClient gitHubApiClient = new GitHubApiClient(githubUsername, accessKey);
+                    GitSubprocessClient gitSubprocessClient = new GitSubprocessClient(selectedDirectoryPath);
 
-                // run gitInit
-                String gitInit = gitSubprocessClient.gitInit();
-                // create remote repo
-                RequestParams requestParams = new RequestParams();
-                requestParams.addParam("name", repoName);                   // name of repo
-                requestParams.addParam("description", repoDescription); // repo description
-                requestParams.addParam("private", privateRepo);                    // if repo is private or not
+                    // run gitInit
+                    String gitInit = gitSubprocessClient.gitInit();
+                    // create remote repo
+                    RequestParams requestParams = new RequestParams();
+                    requestParams.addParam("name", repoName);                   // name of repo
+                    requestParams.addParam("description", repoDescription); // repo description
+                    requestParams.addParam("private", privateRepo);                    // if repo is private or not
 
-                CreateRepoResponse createRepo = gitHubApiClient.createRepo(requestParams);
+                    CreateRepoResponse createRepo = gitHubApiClient.createRepo(requestParams);
 
-                // link to the repo
-                String link = "https://github.com/" + githubUsername + "/" + repoName;
-                System.out.println("Link to your repo: " + link );
+                    // link to the repo
+                    String link = "https://github.com/" + githubUsername + "/" + repoName;
+                    System.out.println("Link to your repo: " + link );
 
-                // add remote origin
-                String gitRemoteAdd = gitSubprocessClient.gitRemoteAdd("origin", link);
-                System.out.println("Remote add origin: " +gitRemoteAdd);
+                    // add remote origin
+                    String gitRemoteAdd = gitSubprocessClient.gitRemoteAdd("origin", link);
+                    System.out.println("Remote add origin: " +gitRemoteAdd);
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
 
-                // make initial commit
-                String gitAddAll = gitSubprocessClient.gitAddAll();
-                String commitMessage = "Inital Commit";
-                String commit = gitSubprocessClient.gitCommit(commitMessage);
-                String push = gitSubprocessClient.gitPush("master");
-                System.out.println(push);
+                    // make initial commit
+                    String gitAddAll = gitSubprocessClient.gitAddAll();
+                    String commitMessage = "Inital Commit";
+                    String commit = gitSubprocessClient.gitCommit(commitMessage);
+                    String push = gitSubprocessClient.gitPush("master");
+                    System.out.println(push);
 
-                // add a gitignore and a readme
-                CreateFileResponse createFile = gitHubApiClient.createFile(githubUsername, repoName, ".gitignore", "master", "*.class\nbin/\nout/\n.classpath\n.vscode", "created a gitignore");
-                String readMeHeader = "<h1>" + repoName + "</h1>";
-                CreateFileResponse createFile2 = gitHubApiClient.createFile(githubUsername, repoName, "README.md", "master", readMeHeader, "created a README");
+                    // add a gitignore and a readme
+                    CreateFileResponse createFile = gitHubApiClient.createFile(githubUsername, repoName, ".gitignore", "master", "*.class\nbin/\nout/\n.classpath\n.vscode", "created a gitignore");
+                    String readMeHeader = "<h1>" + repoName + "</h1>";
+                    CreateFileResponse createFile2 = gitHubApiClient.createFile(githubUsername, repoName, "README.md", "master", readMeHeader, "created a README");
 
 
 
-            });
+            }
+        });
 
             // Make the frame visible
             frame.setVisible(true);
